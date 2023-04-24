@@ -1,21 +1,29 @@
 # project-fire-backend
+
 Repository for the backend of the Ant Colony internship project from Team Fire.
 
 Package versions:
 
- devDependencies: 
- 
-    "@types/bcrypt": "^5.0.0",
-    "@types/express": "^4.17.17",
-    "nodemon": "^2.0.22",
-    "ts-node": "^10.9.1",
-    "typescript": "^5.0.4"
+dependencies
 
-  dependencies
-   
     "bcrypt": "^5.1.0",
+    "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "envalid": "^7.3.1",
     "express": "^4.18.2",
-    "mongoose": "^7.0.3"
+    "http-errors": "^2.0.0",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.0.3",
+    "multer": "^1.4.5-lts.1"
 
+devDependencies:
+
+    "@types/bcrypt": "^5.0.0",
+    "@types/cors": "^2.8.13",
+    "@types/express": "^4.17.17",
+    "@types/http-errors": "^2.0.1",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/multer": "^1.4.7",
+    "nodemon": "^2.0.22",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
