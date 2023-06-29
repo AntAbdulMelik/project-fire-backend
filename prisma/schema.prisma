@@ -1,0 +1,176 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URI")
+}
+
+enum Role {
+  Admin @map("1")
+  Guest @map("2")
+}
+
+enum Department {
+  Administration @map("1")
+  Management     @map("2")
+  Development    @map("3")
+  Design         @map("4")
+}
+
+enum TechStack {
+  AdminNA   @map("1")
+  MgmtNA    @map("2")
+  FullStack @map("3")
+  Backend   @map("4")
+  Frontend  @map("5")
+  UXUI      @map("6")
+}
+
+enum ProjectType {
+  Fixed   @map("1")
+  OnGoing @map("2")
+}
+
+enum SalesChannel {
+  Online   @map("1")
+  InPerson @map("2")
+  Referral @map("3")
+  Other    @map("4")
+}
+
+enum ProjectStatus {
+  Active    @map("1")
+  OnHold    @map("2")
+  Inactive  @map("3")
+  Completed @map("4")
+}
+
+enum Currency {
+  USD @map("1")
+  EUR @map("2")
+  BAM @map("3")
+}
+
+enum Month {
+  January   @map("1")
+  February  @map("2")
+  March     @map("3")
+  April     @map("4")
+  May       @map("5")
+  June      @map("6")
+  July      @map("7")
+  August    @map("8")
+  September @map("9")
+  October   @map("10")
+  November  @map("11")
+  December  @map("12")
+}
+
+enum InvoiceStatus {
+  Paid    @map("1")
+  Sent    @map("2")
+  NotSent @map("3")
+}
+
+model User {
+  id        String  @id @default(auto()) @map("_id") @db.ObjectId
+  email     String  @unique
+  firstName String
+  lastName  String
+  password  String
+  image     String?
+  role      Role    @default(Guest)
+  token     Token[]
+
+  @@map("Users")
+}
+
+model Token {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  token      String
+  expiration DateTime
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String   @db.ObjectId
+
+  @@unique([token, userId])
+  @@map("Tokens")
+}
+
+model Employee {
+  id         String            @id @default(auto()) @map("_id") @db.ObjectId
+  firstName  String
+  lastName   String
+  image      String?
+  department Department
+  salary     Float
+  currency   Currency
+  techStack  TechStack
+  isEmployed Boolean           @default(true)
+  projects   ProjectEmployee[]
+
+  @@map("Employees")
+}
+
+model Project {
+  id              String            @id @default(auto()) @map("_id") @db.ObjectId
+  name            String            @unique
+  description     String
+  startDate       DateTime          @db.Date
+  endDate         DateTime          @db.Date
+  actualEndDate   DateTime?         @db.Date
+  projectType     ProjectType
+  hourlyRate      Float
+  projectValueBAM Float
+  salesChannel    SalesChannel
+  projectStatus   ProjectStatus     @default(Active)
+  employees       ProjectEmployee[]
+
+  @@map("Projects")
+}
+
+model ProjectEmployee {
+  id         String   @id @default(auto()) @map("_id") @db.ObjectId
+  project    Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  employee   Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  projectId  String   @db.ObjectId
+  employeeId String   @db.ObjectId
+  partTime   Boolean  @default(false)
+
+  @@unique([projectId, employeeId])
+  @@map("Employees On Projects")
+}
+
+model ExpenseCategory {
+  id          String    @id @default(auto()) @map("_id") @db.ObjectId
+  name        String    @unique
+  description String
+  Expense     Expense[]
+
+  @@map("Expense Categories")
+}
+
+model Expense {
+  id                String          @id @default(auto()) @map("_id") @db.ObjectId
+  year              Int
+  month             Month
+  plannedExpense    Float?
+  actualExpense     Float?
+  expenseCategory   ExpenseCategory @relation(fields: [expenseCategoryId], references: [id], onDelete: Cascade)
+  expenseCategoryId String          @db.ObjectId
+
+  @@unique([year, month, expenseCategoryId])
+  @@map("Expenses")
+}
+
+model Invoice {
+  id               String        @id @default(auto()) @map("_id") @db.ObjectId
+  client           String
+  industry         String
+  totalHoursBilled Int
+  amountBilledBAM  Float
+  invoiceStatus    InvoiceStatus
+
+  @@map("Invoices")
+}
